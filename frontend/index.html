@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mealo — Eat Smart. Spend Less.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── NAVBAR ──────────────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="logo">
+      <span class="logo-icon">🍱</span>
+      <span class="logo-text">mealo</span>
+    </div>
+    <div class="nav-tagline">Eat Smart. Spend Less.</div>
+    <button class="cart-btn" id="cartBtn" onclick="toggleCart()">
+      <span class="cart-icon">🛒</span>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-blob blob1"></div>
+  <div class="hero-blob blob2"></div>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">For students. By students.</p>
+    <h1 class="hero-title">What's your budget<br/>for today?</h1>
+    <div class="budget-widget">
+      <div class="budget-input-wrap">
+        <span class="rupee">₹</span>
+        <input type="number" id="budgetInput" placeholder="e.g. 150" min="0" max="999" />
+      </div>
+      <div class="budget-presets">
+        <button class="preset" onclick="setPreset(50)">₹50</button>
+        <button class="preset" onclick="setPreset(100)">₹100</button>
+        <button class="preset" onclick="setPreset(150)">₹150</button>
+        <button class="preset" onclick="setPreset(200)">₹200</button>
+      </div>
+      <button class="find-btn" onclick="discoverMeals()">
+        Find My Meals →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN CONTENT ──────────────────────────────────────────────── -->
+<main class="main" id="mainContent" style="display:none">
+
+  <!-- Budget Status Bar -->
+  <div class="budget-bar">
+    <div class="budget-bar-inner">
+      <div class="budget-stat">
+        <span class="stat-label">Total Budget</span>
+        <span class="stat-value" id="totalBudget">₹0</span>
+      </div>
+      <div class="budget-progress-wrap">
+        <div class="budget-progress-track">
+          <div class="budget-progress-fill" id="budgetFill"></div>
+        </div>
+        <span class="budget-pct" id="budgetPct">0% used</span>
+      </div>
+      <div class="budget-stat">
+        <span class="stat-label">Remaining</span>
+        <span class="stat-value highlight" id="remainingBudget">₹0</span>
+      </div>
+      <div class="budget-stat">
+        <span class="stat-label">Selected</span>
+        <span class="stat-value" id="selectedCount">0 items</span>
+      </div>
+      <button class="change-budget-btn" onclick="resetToHero()">Change Budget</button>
+    </div>
+  </div>
+
+  <div class="content-grid">
+
+    <!-- LEFT: Meals -->
+    <section class="meals-section">
+
+      <!-- Search + Filters -->
+      <div class="filters-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search meals…" oninput="applyFilters()" />
+        </div>
+        <div class="filter-pills">
+          <button class="pill active" data-type="all" onclick="setType(this,'all')">All</button>
+          <button class="pill" data-type="veg" onclick="setType(this,'veg')">🌿 Veg</button>
+          <button class="pill" data-type="nonveg" onclick="setType(this,'nonveg')">🍗 Non-Veg</button>
+        </div>
+        <div class="filter-pills">
+          <button class="cat-pill active" data-cat="all" onclick="setCat(this,'all')">All</button>
+          <button class="cat-pill" data-cat="breakfast" onclick="setCat(this,'breakfast')">Breakfast</button>
+          <button class="cat-pill" data-cat="lunch" onclick="setCat(this,'lunch')">Lunch</button>
+          <button class="cat-pill" data-cat="snacks" onclick="setCat(this,'snacks')">Snacks</button>
+        </div>
+      </div>
+
+      <!-- Meal Count -->
+      <p class="meal-count" id="mealCount">Showing all meals</p>
+
+      <!-- Meal Grid -->
+      <div class="meal-grid" id="mealGrid">
+        <!-- populated by JS -->
+      </div>
+
+    </section>
+
+    <!-- RIGHT: Vendors -->
+    <aside class="vendors-section">
+      <h2 class="section-title">📍 Nearby Food Spots</h2>
+      <p class="section-sub">Tiffin centres & home kitchens near you</p>
+      <div class="vendor-list" id="vendorList">
+        <!-- populated by JS -->
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<!-- ── CART DRAWER ───────────────────────────────────────────────── -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>My Order</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <span>🍽️</span>
+      <p>No meals selected yet</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cartTotal">₹0</span>
+    </div>
+    <button class="order-btn" onclick="placeOrder()">Order Now 🚀</button>
+  </div>
+</div>
+
+<!-- ── ORDER SUCCESS MODAL ───────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-success-ring">
+      <span class="modal-check">✓</span>
+    </div>
+    <h2 class="modal-title">Order Placed!</h2>
+    <p class="modal-sub">Order placed (simulation)</p>
+    <div class="modal-details" id="modalDetails"></div>
+    <button class="modal-close-btn" onclick="closeModal()">Done 🎉</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
