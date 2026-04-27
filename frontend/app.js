@@ -1,5 +1,5 @@
 /* ── STATE ─────────────────────────────────────────────────────── */
-const API = 'http://localhost:3000';
+const API = 'https://mealo-backend-z303.onrender.com';
 
 let state = {
   budget: 0,
